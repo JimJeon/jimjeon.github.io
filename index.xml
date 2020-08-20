@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>물 한 잔</title>
-    <link>jimjeon.github.io/</link>
-    <description>물 한 잔</description>
+    <title></title>
+    <link>/</link>
+    <description></description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 13 Aug 2020 16:36:00 +0900</lastBuildDate>
     
-    <atom:link href="jimjeon.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>My first post</title>
-      <link>jimjeon.github.io/posts/my-first-post/</link>
+      <link>/posts/my-first-post/</link>
       <pubDate>Thu, 13 Aug 2020 16:36:00 +0900</pubDate>
       
-      <guid>jimjeon.github.io/posts/my-first-post/</guid>
+      <guid>/posts/my-first-post/</guid>
       <description></description>
     </item>
     
