@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on My Blog</title>
+    <link>jimjeon.github.io/posts/</link>
+    <description>My Blog (Posts)</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 13 Aug 2020 16:36:00 +0900</lastBuildDate>
+    
+    <atom:link href="jimjeon.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>My first post</title>
+      <link>jimjeon.github.io/posts/my-first-post/</link>
+      <pubDate>Thu, 13 Aug 2020 16:36:00 +0900</pubDate>
+      
+      <guid>jimjeon.github.io/posts/my-first-post/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
