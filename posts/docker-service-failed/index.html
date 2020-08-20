@@ -16,12 +16,11 @@
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="apple-touch-icon-precomposed" href="favicon.png">
 
-<link rel="stylesheet" href="css/light.css?rnd=1597912552" />
+<link rel="stylesheet" href="css/light.css?rnd=1597917539" />
 <style>
 
-    @media (prefers-color-scheme: dark) {
-        :root {
-            --font-color: #eee;
+    [data-theme="dark"] {   
+        --font-color: #eee;
 --bg-color: #212121;
 
 --link-color:#599ada;
@@ -45,17 +44,15 @@
 --switcher-color: #333;
 --switcher-bg-color: #fff;
 
-        }
-        
     }
 
 </style>
 
-<link rel="stylesheet" href="css/style.css?rnd=1597912552" />
+<link rel="stylesheet" href="css/style.css?rnd=1597917539" />
 
-<link rel="stylesheet" href="css/my.css?rnd=1597912552">
 
-<script src="js/main.js?rnd=1597912552" type="text/javascript" charset="utf-8"></script>
+
+
 
 <meta property="og:title" content="Job for docker.service failed" />
 <meta property="og:description" content="얼마 전, 방치해뒀던 한 서버의 도커가 올바르게 동작하지 않는 문제가 발생했다.
@@ -194,6 +191,73 @@ Job for docker.service failed because the control process exited with error code
     
 
 
+
+    <button class="theme-switcher">
+        Dark theme
+    </button>
+
+    <script>
+    const STORAGE_KEY = 'user-color-scheme'
+    const defaultTheme = "auto"
+
+    let currentTheme
+    let switchButton
+    let autoDefinedScheme = window.matchMedia('(prefers-color-scheme: dark)')
+
+    const autoChangeScheme = e => {
+        currentTheme = e.matches ? 'dark' : 'light'
+        document.documentElement.setAttribute('data-theme', currentTheme)
+        changeButtonText()
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        switchButton = document.querySelector('.theme-switcher')
+        currentTheme = detectCurrentScheme()
+        if (currentTheme == 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark')
+        }
+        if (currentTheme == 'auto') {
+            autoChangeScheme(autoDefinedScheme);
+            autoDefinedScheme.addListener(autoChangeScheme);
+        }
+        changeButtonText()
+        switchButton.addEventListener('click', switchTheme, false)
+    })
+
+    function detectCurrentScheme() {
+        if (localStorage.getItem(STORAGE_KEY)) {
+            return localStorage.getItem(STORAGE_KEY)
+        } 
+        if (defaultTheme) {
+            return defaultTheme
+        } 
+        if (!window.matchMedia) {
+            return 'light'
+        } 
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark'
+        }
+        return 'light'
+    }
+
+    function changeButtonText()
+    {   
+        switchButton.textContent = currentTheme == 'dark' ?  "Light theme" : "Dark theme"
+    }
+
+    function switchTheme(e) {
+        if (currentTheme == 'dark') {
+            localStorage.setItem(STORAGE_KEY, 'light')
+            document.documentElement.setAttribute('data-theme', 'light')
+            currentTheme = 'light'
+        } else {
+            localStorage.setItem(STORAGE_KEY, 'dark')
+            document.documentElement.setAttribute('data-theme', 'dark')
+            currentTheme = 'dark'
+        }
+        changeButtonText()
+    }
+    </script>
    
     </div>
 
