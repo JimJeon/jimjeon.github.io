@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Categories on </title>
+    <title>Categories on 타이틀</title>
     <link>/categories/</link>
-    <description> (Categories)</description>
+    <description>타이틀 (Categories)</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
