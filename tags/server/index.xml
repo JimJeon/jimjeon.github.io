@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on TL;DR</title>
-    <link>/posts/</link>
-    <description>TL;DR (Posts)</description>
+    <title>server on TL;DR</title>
+    <link>/tags/server/</link>
+    <description>TL;DR (server)</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 15 Aug 2020 14:17:58 +0900</lastBuildDate>
     
-    <atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/server/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -61,15 +61,6 @@ hosts: (from flag: [fd://], from file: [tcp://0.0.0.0:2375 unix:///var/run/docke
 file은 &lt;code&gt;/etc/docker/daemon.json&lt;/code&gt;에서 설정해줍니다.&lt;/p&gt;
 &lt;p&gt;따라서 두 설정 값 중에 하나만 사용할 수 있도록 수정해주면 문제 없이 도커 엔진을 실행시킬 수 있게
 됩니다.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>My first post</title>
-      <link>/posts/my-first-post/</link>
-      <pubDate>Thu, 13 Aug 2020 16:36:00 +0900</pubDate>
-      
-      <guid>/posts/my-first-post/</guid>
-      <description></description>
     </item>
     
   </channel>

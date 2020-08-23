@@ -6,10 +6,62 @@
     <description>TL;DR</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 13 Aug 2020 16:36:00 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 15 Aug 2020 14:17:58 +0900</lastBuildDate>
     
     <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Job for docker.service failed</title>
+      <link>/posts/docker-service-failed/</link>
+      <pubDate>Sat, 15 Aug 2020 14:17:58 +0900</pubDate>
+      
+      <guid>/posts/docker-service-failed/</guid>
+      <description>&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;/etc/docker/daemon.json&lt;/code&gt; 에서 엔진의 소켓 값을 설정할 수 있음.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/lib/systemd/system/docker.service&lt;/code&gt; 에서 엔진의 소켓 값을 설정할 수 있음.&lt;/li&gt;
+&lt;li&gt;위의 두 설정 값이 겹치게 되면 도커 엔진을 실행할 수 없게 됨.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;이 글은 서버 도커 설정 문제를 해결하며 알게 된 내용들을 정리한 글입니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1 id=&#34;도커가-안-켜져&#34;&gt;도커가 안 켜져!&lt;/h1&gt;
+&lt;p&gt;얼마 전, 방치해뒀던 한 서버의 도커가 올바르게 동작하지 않는 문제가 발생했습니다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;$ docker ps
+Cannot connect to the Docker daemon at unix:///var/run/docker.sock.
+Is the docker daemon running?
+
+$ sudo systemctl start docker.service
+Job for docker.service failed because the control process exited with error code.
+See &amp;#34;systemctl status docker.service&amp;#34; and &amp;#34;journalctl -xe&amp;#34; for details.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;도커 데몬이 올바르게 시작되지 않는 문제가 발생한 것이었는데, 오랫동안 만지지 않고 있던 서버라서
+문제가 발생한 원인은 알 수 없었습니다.&lt;/p&gt;
+&lt;p&gt;메시지에 나온대로 &lt;code&gt;systemctl status docker.service&lt;/code&gt;와 &lt;code&gt;journalctl -xe&lt;/code&gt;를 통해서 로그를 확인 해 본 결과
+아래와 같은 내용을 확인할 수 있었습니다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;$ systemctl status docker.service
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+   Active: failed (Result: start-limit-hit) since 날짜
+     Docs: https://docs.docker.com
+  Process: 24454 ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock (code=exited, status=1/FAILURE)
+ Main PID: 24454 (code=exited, status=1/FAILURE)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;journalctl -xe&lt;/code&gt;의 경우에는 로그의 양이 많아서 도커 관련 로그만 따로 뽑아서 보면 다음과 같았습니다.
+다만, 로그가 너무 길어서 처음에는 그냥 지나쳐 버리고 말았습니다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;$ sudo journalctl -b -u docker.service
+unable to configure the Docker daemon with file /etc/docker/daemon.json:
+the following directives are specified both as a flag and in the configuration file:
+hosts: (from flag: [fd://], from file: [tcp://0.0.0.0:2375 unix:///var/run/docker.sock])
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;즉, 실행시에 &lt;code&gt;hosts&lt;/code&gt; 값이 실행 시점에 flag 값과 설정 파일에 중복 되어 있어서 발생하는 문제라는 뜻입니다.
+로그를 살펴보면 아래의 항목들을 찾아볼 수 있습니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;from flag: fd://&lt;/li&gt;
+&lt;li&gt;from file: tcp://0.0.0.0:2375, unix:///var/run/docker.sock&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;여기서 flag는 찾아본 결과 &lt;code&gt;/lib/systemd/system/docker.service&lt;/code&gt;의 &lt;code&gt;ExecStart&lt;/code&gt; 값으로 설정되고
+file은 &lt;code&gt;/etc/docker/daemon.json&lt;/code&gt;에서 설정해줍니다.&lt;/p&gt;
+&lt;p&gt;따라서 두 설정 값 중에 하나만 사용할 수 있도록 수정해주면 문제 없이 도커 엔진을 실행시킬 수 있게
+됩니다.&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>My first post</title>
