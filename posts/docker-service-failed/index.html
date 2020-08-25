@@ -16,7 +16,7 @@
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="apple-touch-icon-precomposed" href="/favicon.png">
 
-<link rel="stylesheet" href="/css/light.css?rnd=1598173511" />
+<link rel="stylesheet" href="/css/light.css?rnd=1598335359" />
 <style>
 
     [data-theme="dark"] {   
@@ -48,11 +48,11 @@
 
 </style>
 
-<link rel="stylesheet" href="/css/style.css?rnd=1598173511" />
+<link rel="stylesheet" href="/css/style.css?rnd=1598335359" />
 
-<link rel="stylesheet" href="/css/my.css?rnd=1598173511">
+<link rel="stylesheet" href="/css/my.css?rnd=1598335359">
 
-<script src="/js/main.js?rnd=1598173511" type="text/javascript" charset="utf-8"></script>
+<script src="/js/main.js?rnd=1598335359" type="text/javascript" charset="utf-8"></script>
 
 <meta property="og:title" content="Job for docker.service failed" />
 <meta property="og:description" content="
@@ -132,7 +132,8 @@ Job for docker.service failed because the control process exited with error code
 See &#34;systemctl status docker.service&#34; and &#34;journalctl -xe&#34; for details.
 </code></pre></div><p>도커 데몬이 올바르게 시작되지 않는 문제가 발생한 것이었는데, 오랫동안 만지지 않고 있던 서버라서
 문제가 발생한 원인은 알 수 없었습니다.</p>
-<p>메시지에 나온대로 <code>systemctl status docker.service</code>와 <code>journalctl -xe</code>를 통해서 로그를 확인 해 본 결과
+<h1 id="조사를-해보자">조사를 해보자</h1>
+<p>에러 메시지에 나온대로 <code>systemctl status docker.service</code>와 <code>journalctl -xe</code>를 통해서 로그를 확인 해 본 결과
 아래와 같은 내용을 확인할 수 있었습니다.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ systemctl status docker.service
 ● docker.service - Docker Application Container Engine
@@ -153,10 +154,27 @@ hosts: (from flag: [fd://], from file: [tcp://0.0.0.0:2375 unix:///var/run/docke
 <li>from flag: fd://</li>
 <li>from file: tcp://0.0.0.0:2375, unix:///var/run/docker.sock</li>
 </ul>
-<p>여기서 flag는 찾아본 결과 <code>/lib/systemd/system/docker.service</code>의 <code>ExecStart</code> 값으로 설정되고
-file은 <code>/etc/docker/daemon.json</code>에서 설정해줍니다.</p>
+<p>여기서 flag는 찾아본 결과 <code>/lib/systemd/system/docker.service</code>의
+<code>ExecStart</code> 값으로 설정되고
+file은 <code>/etc/docker/daemon.json</code> 파일에서 설정됩니다.</p>
 <p>따라서 두 설정 값 중에 하나만 사용할 수 있도록 수정해주면 문제 없이 도커 엔진을 실행시킬 수 있게
 됩니다.</p>
+<h1 id="해결">해결!</h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># /etc/docker/daemon.json
+{&#34;hosts&#34;: [&#34;tcp://0.0.0.0:2375&#34;, &#34;unix:///var/run/docker.sock&#34;]}
+
+# /lib/systemd/system/docker.serivce
+[Service]
+...
+ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+</code></pre></div><p>내 경우에는 위의 두 경우처럼 설정이 되어 있었다.
+따라서 아래의 <code>docker.service</code> 파일의 <code>-H fd://</code> 옵션 부분을 제거해서
+<code>daemon.json</code>으로만 소켓 설정을 할 수 있도록 하는 것으로 해결했다.</p>
+<p><code>/lib/systemd/system/docker.service</code> 파일을 수정하게 되면</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ sudo systemctl daemon-reload
+</code></pre></div><p>위의 명령을 통해 해당 데몬을 Reload 해주어야 한다.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ sudo systemctl start docker.service
+</code></pre></div><p>그리고 데몬을 실행시켜주면 해결완료!</p>
         </div>
         
 
@@ -191,17 +209,6 @@ file은 <code>/etc/docker/daemon.json</code>에서 설정해줍니다.</p>
 
     
         
-    <div class="pagination post-pagination">
-        <div class="left pagination-item disabled">
-            
-        </div>
-        <div class="right pagination-item ">
-            
-                <a href="/posts/my-first-post/">My first post</a>
-            
-        </div>
-    </div>
-
     
 
     

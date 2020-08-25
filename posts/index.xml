@@ -36,7 +36,8 @@ Job for docker.service failed because the control process exited with error code
 See &amp;#34;systemctl status docker.service&amp;#34; and &amp;#34;journalctl -xe&amp;#34; for details.
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;도커 데몬이 올바르게 시작되지 않는 문제가 발생한 것이었는데, 오랫동안 만지지 않고 있던 서버라서
 문제가 발생한 원인은 알 수 없었습니다.&lt;/p&gt;
-&lt;p&gt;메시지에 나온대로 &lt;code&gt;systemctl status docker.service&lt;/code&gt;와 &lt;code&gt;journalctl -xe&lt;/code&gt;를 통해서 로그를 확인 해 본 결과
+&lt;h1 id=&#34;조사를-해보자&#34;&gt;조사를 해보자&lt;/h1&gt;
+&lt;p&gt;에러 메시지에 나온대로 &lt;code&gt;systemctl status docker.service&lt;/code&gt;와 &lt;code&gt;journalctl -xe&lt;/code&gt;를 통해서 로그를 확인 해 본 결과
 아래와 같은 내용을 확인할 수 있었습니다.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;$ systemctl status docker.service
 ● docker.service - Docker Application Container Engine
@@ -57,19 +58,27 @@ hosts: (from flag: [fd://], from file: [tcp://0.0.0.0:2375 unix:///var/run/docke
 &lt;li&gt;from flag: fd://&lt;/li&gt;
 &lt;li&gt;from file: tcp://0.0.0.0:2375, unix:///var/run/docker.sock&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;여기서 flag는 찾아본 결과 &lt;code&gt;/lib/systemd/system/docker.service&lt;/code&gt;의 &lt;code&gt;ExecStart&lt;/code&gt; 값으로 설정되고
-file은 &lt;code&gt;/etc/docker/daemon.json&lt;/code&gt;에서 설정해줍니다.&lt;/p&gt;
+&lt;p&gt;여기서 flag는 찾아본 결과 &lt;code&gt;/lib/systemd/system/docker.service&lt;/code&gt;의
+&lt;code&gt;ExecStart&lt;/code&gt; 값으로 설정되고
+file은 &lt;code&gt;/etc/docker/daemon.json&lt;/code&gt; 파일에서 설정됩니다.&lt;/p&gt;
 &lt;p&gt;따라서 두 설정 값 중에 하나만 사용할 수 있도록 수정해주면 문제 없이 도커 엔진을 실행시킬 수 있게
-됩니다.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>My first post</title>
-      <link>/posts/my-first-post/</link>
-      <pubDate>Thu, 13 Aug 2020 16:36:00 +0900</pubDate>
-      
-      <guid>/posts/my-first-post/</guid>
-      <description></description>
+됩니다.&lt;/p&gt;
+&lt;h1 id=&#34;해결&#34;&gt;해결!&lt;/h1&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;# /etc/docker/daemon.json
+{&amp;#34;hosts&amp;#34;: [&amp;#34;tcp://0.0.0.0:2375&amp;#34;, &amp;#34;unix:///var/run/docker.sock&amp;#34;]}
+
+# /lib/systemd/system/docker.serivce
+[Service]
+...
+ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;내 경우에는 위의 두 경우처럼 설정이 되어 있었다.
+따라서 아래의 &lt;code&gt;docker.service&lt;/code&gt; 파일의 &lt;code&gt;-H fd://&lt;/code&gt; 옵션 부분을 제거해서
+&lt;code&gt;daemon.json&lt;/code&gt;으로만 소켓 설정을 할 수 있도록 하는 것으로 해결했다.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;/lib/systemd/system/docker.service&lt;/code&gt; 파일을 수정하게 되면&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ sudo systemctl daemon-reload
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;위의 명령을 통해 해당 데몬을 Reload 해주어야 한다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ sudo systemctl start docker.service
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;그리고 데몬을 실행시켜주면 해결완료!&lt;/p&gt;</description>
     </item>
     
   </channel>
