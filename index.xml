@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>TL;DR</title>
+    <title>Jimkipedia</title>
     <link>/</link>
-    <description>TL;DR</description>
+    <description>Jimkipedia</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 15 Aug 2020 14:17:58 +0900</lastBuildDate>
@@ -79,6 +79,48 @@ ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;위의 명령을 통해 해당 데몬을 Reload 해주어야 한다.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ sudo systemctl start docker.service
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;그리고 데몬을 실행시켜주면 해결완료!&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Search Results</title>
+      <link>/search/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/search/</guid>
+      <description>&lt;p&gt;This file exists solely to respond to /search URL with the related &lt;code&gt;search&lt;/code&gt; layout template.&lt;/p&gt;
+&lt;p&gt;No content shown here is rendered, all content is based in the template layouts/page/search.html&lt;/p&gt;
+&lt;p&gt;Setting a very low sitemap priority will tell search engines this is not important content.&lt;/p&gt;
+&lt;p&gt;This implementation uses Fusejs, jquery and mark.js&lt;/p&gt;
+&lt;h2 id=&#34;initial-setup&#34;&gt;Initial setup&lt;/h2&gt;
+&lt;p&gt;Search  depends on additional output content type of JSON in config.toml
+```
+[outputs]
+home = [&amp;ldquo;HTML&amp;rdquo;, &amp;ldquo;JSON&amp;rdquo;]
+```&lt;/p&gt;
+&lt;h2 id=&#34;searching-additional-fileds&#34;&gt;Searching additional fileds&lt;/h2&gt;
+&lt;p&gt;To search additional fields defined in front matter, you must add it in 2 places.&lt;/p&gt;
+&lt;h3 id=&#34;edit-layouts_defaultindexjson&#34;&gt;Edit layouts/_default/index.JSON&lt;/h3&gt;
+&lt;p&gt;This exposes the values in /index.json
+i.e. add &lt;code&gt;category&lt;/code&gt;
+```
+&amp;hellip;
+&amp;ldquo;contents&amp;rdquo;:{{ .Content | plainify | jsonify }}
+{{ if .Params.tags }},
+&amp;ldquo;tags&amp;rdquo;:{{ .Params.tags | jsonify }}{{end}},
+&amp;ldquo;categories&amp;rdquo; : {{ .Params.categories | jsonify }},
+&amp;hellip;
+```&lt;/p&gt;
+&lt;h3 id=&#34;edit-fusejs-options-to-search&#34;&gt;Edit fuse.js options to Search&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;static/js/search.js&lt;/code&gt;
+```
+keys: [
+&amp;ldquo;title&amp;rdquo;,
+&amp;ldquo;contents&amp;rdquo;,
+&amp;ldquo;tags&amp;rdquo;,
+&amp;ldquo;categories&amp;rdquo;
+]
+```&lt;/p&gt;
+</description>
     </item>
     
   </channel>

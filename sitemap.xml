@@ -18,6 +18,11 @@
   </url>
   
   <url>
+    <loc>/</loc>
+    <lastmod>2020-08-15T14:17:58+09:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/posts/docker-service-failed/</loc>
     <lastmod>2020-08-15T14:17:58+09:00</lastmod>
   </url>
@@ -38,8 +43,8 @@
   </url>
   
   <url>
-    <loc>/</loc>
-    <lastmod>2020-08-15T14:17:58+09:00</lastmod>
+    <loc>/search/</loc>
+    <priority>0.1</priority>
   </url>
   
 </urlset>

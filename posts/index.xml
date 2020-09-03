@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on TL;DR</title>
+    <title>Posts on Jimkipedia</title>
     <link>/posts/</link>
-    <description>TL;DR (Posts)</description>
+    <description>Jimkipedia (Posts)</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 15 Aug 2020 14:17:58 +0900</lastBuildDate>

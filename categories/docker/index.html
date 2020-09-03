@@ -3,6 +3,10 @@
 
 <html lang="en-us" data-theme="">
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.0/fuse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js"></script>
+    
     
         
 <meta charset="utf-8">
@@ -10,14 +14,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="no-referrer-when-downgrade">
 
-<title>docker - TL;DR</title>
+<title>docker - Jimkipedia</title>
 <meta name="description" content="이것저것 잡동사니">
 
-<link rel="alternate" type="application/rss+xml" href="/categories/docker/index.xml" title="TL;DR" />
+<link rel="alternate" type="application/rss+xml" href="/categories/docker/index.xml" title="Jimkipedia" />
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="apple-touch-icon-precomposed" href="/favicon.png">
 
-<link rel="stylesheet" href="/css/light.css?rnd=1598335359" />
+<link rel="stylesheet" href="/css/light.css?rnd=1599094543" />
 <style>
 
     [data-theme="dark"] {   
@@ -49,11 +53,12 @@
 
 </style>
 
-<link rel="stylesheet" href="/css/style.css?rnd=1598335359" />
+<link rel="stylesheet" href="/css/style.css?rnd=1599094543" />
+<link rel="stylesheet" href="/css/search.css?rnd=1599094543" />
 
-<link rel="stylesheet" href="/css/my.css?rnd=1598335359">
 
-<script src="/js/main.js?rnd=1598335359" type="text/javascript" charset="utf-8"></script>
+
+
 
 <meta property="og:title" content="docker" />
 <meta property="og:description" content="이것저것 잡동사니" />
@@ -75,6 +80,7 @@
 
 
 
+
     
 </head>
 <body>
@@ -83,16 +89,36 @@
         <header class="common-header"> 
             
                 <h1 class="site-title">
-    <a href="/">TL;DR</a>
+    <a href="/">Jimkipedia</a>
 </h1>
-<nav>
-    
-    
-    <a class="" href="/posts/" title="Archive">Archive</a>
-    
-    <a class="" href="/tags/" title="Tags">Tags</a>
-    
-</nav>
+
+    <nav>
+        
+        
+        <a class="" href="/posts/" title="Archive">Archive</a>
+        
+        <a class="" href="/tags/" title="Tags">Tags</a>
+        
+
+        <div class="search-div">
+            <form class="search-form" action="/search" for="search-input">
+                <input id="search-input" type="text" name="s" />
+            </form>
+        </div>
+    </nav>
+
+
+<script>
+   $("#search-input").on({
+       focus: function () {
+           $(this).parent('form').addClass('search-active');
+        },
+       blur: function () {
+           if ($(this).val().length == 0)
+               $(this).parent('form').removeClass('search-active');
+       }
+   })
+</script>
 
             
         </header>
